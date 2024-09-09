@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -41,11 +42,11 @@ const FormSchema = z.object({
   password: z.string().min(2, {
     message: "Password must be at least 8 characters.",
   }),
-  date: z.string().min(2, {
-    message: "Password must be at least 8 characters.",
+  date: z.date({
+    message: "date must be at least 8 characters.",
   }),
-  gender: z.string().min(2, {
-    message: "Password must be at least 8 characters.",
+  gender: z.string({
+    message: "gender must be at least 8 characters.",
   }),
 });
 
@@ -56,7 +57,7 @@ export function LoginForm() {
       username: "",
       email: "",
       password: "",
-      date: "",
+      date: new Date(Date.now()),
       gender: "",
     },
   });
@@ -123,7 +124,7 @@ export function LoginForm() {
           name="gender"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Gender</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
@@ -168,7 +169,7 @@ export function LoginForm() {
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
-                    selected={field.value}
+                    selected={field.value as any}
                     onSelect={field.onChange}
                     disabled={(date) =>
                       date > new Date() || date < new Date("1900-01-01")

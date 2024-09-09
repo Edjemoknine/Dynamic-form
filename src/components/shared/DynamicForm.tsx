@@ -15,7 +15,7 @@ const DynamicForm = () => {
     setFields({ ...fields, [e.target.name]: e.target.value });
   };
 
-  const EmpolChange = (event: ChangeEvent<HTMLInputElement>, idx: number) => {
+  const EmpolChange = (event: ChangeEvent<HTMLInputElement>, _idx: number) => {
     // const updatedEmployees = [...subEmploye];
     // updatedEmployees[idx][event.target.name] = [event.target.value];
     setsubEmploye([...subEmploye, { rule: event.target.value }]);
