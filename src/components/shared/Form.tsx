@@ -32,10 +32,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 
-const FormSchema = z.object({
+const FormSchemaWithoutMidName = z.object({
   username: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
+
+  hasMidname: z.literal(false),
   email: z.string().email().min(2, {
     message: "Email is required.",
   }),
@@ -49,6 +51,32 @@ const FormSchema = z.object({
     message: "gender must be at least 8 characters.",
   }),
 });
+const FormSchemaWithMidName = z.object({
+  username: z.string().min(2, {
+    message: "Username must be at least 2 characters.",
+  }),
+  middleName: z.string().min(2, {
+    message: "middlename must be at least 2 characters.",
+  }),
+  hasMidname: z.literal(true),
+  email: z.string().email().min(2, {
+    message: "Email is required.",
+  }),
+  password: z.string().min(2, {
+    message: "Password must be at least 8 characters.",
+  }),
+  date: z.date({
+    message: "date must be at least 8 characters.",
+  }),
+  gender: z.string({
+    message: "gender must be at least 8 characters.",
+  }),
+});
+
+const FormSchema = z.discriminatedUnion("hasMidname", [
+  FormSchemaWithoutMidName,
+  FormSchemaWithMidName,
+]);
 
 export function LoginForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -73,6 +101,8 @@ export function LoginForm() {
     });
   }
 
+  const hasAnMiddleName = form.watch("hasMidname");
+
   return (
     <Form {...form}>
       <form
@@ -93,6 +123,34 @@ export function LoginForm() {
             </FormItem>
           )}
         />
+        <div>
+          <label htmlFor="has" className="text-sm font-medium mr-3">
+            Do you has middle name ?
+          </label>
+          <input type="checkbox" id="has" {...form.register("hasMidname")} />
+        </div>
+        {hasAnMiddleName && (
+          // <>
+          //   <Input
+          //     placeholder="Edj"
+          //     {...form.register("middleName", { shouldUnregister: true })}
+          //   />
+          // </>
+          <FormField
+            control={form.control}
+            name="middleName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>MiddleName</FormLabel>
+                <FormControl>
+                  <Input placeholder="Edj" {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         <FormField
           control={form.control}
           name="email"
@@ -184,6 +242,8 @@ export function LoginForm() {
         />
         <Button type="submit">Submit</Button>
       </form>
+
+      <pre>{JSON.stringify(form.watch(), null, 2)}</pre>
     </Form>
   );
 }
