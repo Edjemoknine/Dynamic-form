@@ -5,7 +5,6 @@ import { ChangeEvent, useState } from "react";
 import { Button } from "../ui/button";
 
 const DynamicForm = () => {
-  const [subEmploye, setsubEmploye] = useState([{ rule: "" }]);
   const [fields, setFields] = useState({
     name: "",
     email: "",
@@ -15,15 +14,25 @@ const DynamicForm = () => {
     setFields({ ...fields, [e.target.name]: e.target.value });
   };
 
-  const EmpolChange = (event: ChangeEvent<HTMLInputElement>, _idx: number) => {
-    // const updatedEmployees = [...subEmploye];
-    // updatedEmployees[idx][event.target.name] = [event.target.value];
-    setsubEmploye([...subEmploye, { rule: event.target.value }]);
-    // setsubEmploye(updatedEmployees);
+  type FieldProps = {
+    rule: string;
+    grad: string;
+  };
+  // Multiple fields state
+  const [subEmploye, setsubEmploye] = useState<FieldProps[]>([
+    { rule: "", grad: "" },
+  ]);
+
+  // Multiple fields handlers
+  const EmpolChange = (e: ChangeEvent<HTMLInputElement>, idx: number) => {
+    console.log(e.target.name, e.target.value, idx);
+    const values = [...subEmploye];
+    values[idx][e.target.name as keyof FieldProps] = e.target.value;
+    setsubEmploye(values);
   };
 
   const handleAddSubEmploye = () => {
-    const newEmployee = { rule: "" };
+    const newEmployee = { rule: "", grad: "" };
     setsubEmploye([...subEmploye, newEmployee]);
   };
   const removeSubEmploye = (idx: number) => {
@@ -73,11 +82,19 @@ const DynamicForm = () => {
         {subEmploye.map((employee, idx) => (
           <div key={idx} className="flex gap-2">
             <input
-              defaultValue={employee.rule}
               className="border rounded p-2 flex-1"
               placeholder="Ex: Frontend .... "
               type="text"
               name="rule"
+              value={employee.rule}
+              onChange={(e) => EmpolChange(e, idx)}
+            />
+            <input
+              className="border rounded p-2 flex-1"
+              placeholder="Ex: Junior .... "
+              type="text"
+              name="grad"
+              value={employee.grad}
               onChange={(e) => EmpolChange(e, idx)}
             />
             {idx > 0 && (
